@@ -71,12 +71,14 @@
                 <li><a href="#" onclick="switchView('shu')" id="nav-shu" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-kop-700 text-slate-300 hover:text-white transition-colors"><i class="fa-solid fa-calculator w-5"></i> Pembagian SHU</a></li>
                 <li class="pt-2 pb-1 px-4 text-xs font-semibold text-kop-100 uppercase tracking-wider">Sistem</li>
                 <li><a href="#" onclick="switchView('pengaturan')" id="nav-pengaturan" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-kop-700 text-slate-300 hover:text-white transition-colors"><i class="fa-solid fa-gear w-5"></i> Pengaturan API</a></li>
+                <li><a href="#" onclick="switchView('pengaturan-app')" id="nav-pengaturan-app" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-kop-700 text-slate-300 hover:text-white transition-colors"><i class="fa-solid fa-sliders w-5"></i> Pengaturan Aplikasi</a></li>
             </ul>
         </nav>
         
         <div class="p-4 border-t border-kop-700 text-xs text-center text-kop-100">
-            <p>Versi 1.8.0</p>
-            <p class="mt-1">Mode: <span id="app-mode" class="font-bold text-yellow-300">Pembayaran Pinjaman</span></p>
+            <p>Versi Free</p>
+            <p class="mt-1">dibuat oleh :</p>
+            <span id="app-mode" class="font-bold text-yellow-300">Supriyadi, S. Pd. Gr - SDN 1 Durian Payung</span></p>
         </div>
     </aside>
 
@@ -105,10 +107,10 @@
                     </div>
                     <div>
                         <h3 class="text-xl font-bold text-slate-800 mb-1">Sistem Informasi Koperasi Guru & Karyawan</h3>
-                        <p class="text-slate-600 font-medium text-sm md:text-base"><i class="fa-solid fa-location-dot text-red-500 mr-1.5"></i>SDN 1 Durian Payung, Kec. Tanjung Karang Pusat, Kota Bandar Lampung</p>
+                        <p class="text-slate-600 font-medium text-sm md:text-base"><i class="fa-solid fa-location-dot text-red-500 mr-1.5"></i><span id="dash-nama-sekolah">SDN 1 Durian Payung</span>, <span id="dash-alamat-sekolah">Kec. Tanjung Karang Pusat, Kota Bandar Lampung</span></p>
                         <div class="flex items-center gap-2 mt-2">
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                                <i class="fa-solid fa-laptop-code text-kop-600"></i> Dikembangkan oleh: <span class="font-bold text-slate-800">Supriyadi, S. Pd. Gr</span>
+                                <i class="fa-solid fa-laptop-code text-kop-600"></i> Dikembangkan oleh: <span class="font-bold text-slate-800" id="dash-nama-pengembang">Supriyadi, S. Pd. Gr</span>
                             </span>
                         </div>
                     </div>
@@ -287,6 +289,26 @@
                         <button onclick="window.print()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-200"><i class="fa-solid fa-print mr-2"></i> Cetak Laporan</button>
                     </div>
                 </div>
+                
+                <!-- Pengaturan Proporsi / Bobot Jabatan -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 mb-6 p-5 no-print">
+                    <h4 class="text-sm font-bold text-slate-800 mb-3"><i class="fa-solid fa-sliders mr-2 text-slate-500"></i>Pengaturan Proporsi / Bobot Jabatan</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">Proporsi Ketua</label>
+                            <input type="number" id="proporsi-ketua" value="1.5" step="0.1" min="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:border-kopblue-500 focus:ring-1 focus:ring-kopblue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">Proporsi Bendahara</label>
+                            <input type="number" id="proporsi-bendahara" value="1.5" step="0.1" min="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:border-kopblue-500 focus:ring-1 focus:ring-kopblue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">Proporsi Anggota</label>
+                            <input type="number" id="proporsi-anggota" value="1.0" step="0.1" min="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:border-kopblue-500 focus:ring-1 focus:ring-kopblue-500">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
                     <div class="hidden print:block text-center py-6 border-b border-slate-800 mb-4">
                         <h2 class="text-2xl font-bold uppercase">Laporan Pembagian SHU</h2><h3 class="text-xl">Koperasi Guru & Karyawan</h3><p class="text-sm mt-1">Total SHU Dibagikan: <span id="print-total-shu" class="font-bold"></span></p>
@@ -326,6 +348,36 @@
                             <div class="pt-4 flex flex-wrap items-center gap-3">
                                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm"><i class="fa-solid fa-save mr-2"></i> Simpan URL</button>
                                 <button type="button" onclick="fetchFromSpreadsheet()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors border border-emerald-200"><i class="fa-solid fa-cloud-arrow-down mr-2"></i> Tarik Data Sekarang</button>
+                                <a href="https://drive.google.com/uc?export=download&id=11INUsmDcxNvLPevvGB7ajzV9hYSDwShB" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors border border-slate-300 flex items-center shadow-sm"><i class="fa-solid fa-download mr-2"></i> Unduh Kode App Script Spreadsheet</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: PENGATURAN APLIKASI -->
+            <div id="view-pengaturan-app" class="view-section hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden max-w-3xl">
+                    <div class="p-5 border-b border-slate-100 bg-slate-50/50">
+                        <h3 class="font-bold text-slate-700 text-lg">Pengaturan Aplikasi</h3>
+                        <p class="text-sm text-slate-500 mt-1">Sesuaikan informasi identitas sekolah dan pengembang aplikasi.</p>
+                    </div>
+                    <div class="p-6">
+                        <form onsubmit="saveAppSettings(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Nama Sekolah <span class="text-red-500">*</span></label>
+                                <input type="text" id="app-nama-sekolah" required class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Alamat Sekolah <span class="text-red-500">*</span></label>
+                                <textarea id="app-alamat-sekolah" required rows="2" class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Nama Pengembang <span class="text-red-500">*</span></label>
+                                <input type="text" id="app-nama-pengembang" required class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                            <div class="pt-4">
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm"><i class="fa-solid fa-save mr-2"></i> Simpan Pengaturan</button>
                             </div>
                         </form>
                     </div>
@@ -463,6 +515,7 @@
         let currentBayarId = null;
         let pendingDelete = null;
         let scriptApiUrl = localStorage.getItem('kop_api_url') || '';
+        let appSettings = JSON.parse(localStorage.getItem('kop_app_settings')) || { namaSekolah: 'SDN 1 Durian Payung', alamatSekolah: 'Kec. Tanjung Karang Pusat, Kota Bandar Lampung', namaPengembang: 'Supriyadi, S. Pd. Gr' };
 
         const excelHeaders = {
             anggota: ['ID', 'Nama', 'Jabatan', 'Lama_Bulan', 'Simpanan_Wajib', 'Simpanan_Sukarela'],
@@ -496,7 +549,7 @@
             document.getElementById(`view-${viewId}`).classList.remove('hidden');
             const activeNav = document.getElementById(`nav-${viewId}`);
             activeNav.classList.remove('text-slate-300'); activeNav.classList.add('bg-kop-700', 'text-white');
-            const titles = { 'dashboard': 'Dashboard', 'anggota': 'Data Anggota', 'simpanan': 'Input Simpanan Anggota', 'pinjaman': 'Data Pinjaman', 'pendapatan': 'Pendapatan Usaha', 'shu': 'Perhitungan SHU', 'pengaturan': 'Pengaturan Sistem API' };
+            const titles = { 'dashboard': 'Dashboard', 'anggota': 'Data Anggota', 'simpanan': 'Input Simpanan Anggota', 'pinjaman': 'Data Pinjaman', 'pendapatan': 'Pendapatan Usaha', 'shu': 'Perhitungan SHU', 'pengaturan': 'Pengaturan Sistem API', 'pengaturan-app': 'Pengaturan Aplikasi' };
             document.getElementById('page-title').innerText = titles[viewId];
         }
 
@@ -624,9 +677,17 @@
                 return;
             }
             
+            const propKetua = parseFloat(document.getElementById('proporsi-ketua').value) || 1.5;
+            const propBendahara = parseFloat(document.getElementById('proporsi-bendahara').value) || 1.5;
+            const propAnggota = parseFloat(document.getElementById('proporsi-anggota').value) || 1.0;
+            
             let totalBobot = 0;
             const dataSHU = appData.anggota.map(a => {
-                const bobot = (a.jabatan === 'Ketua' || a.jabatan === 'Bendahara') ? a.lama_bulan * 1.5 : a.lama_bulan * 1.0;
+                let pengali = propAnggota;
+                if (a.jabatan === 'Ketua') pengali = propKetua;
+                else if (a.jabatan === 'Bendahara') pengali = propBendahara;
+                
+                const bobot = a.lama_bulan * pengali;
                 totalBobot += bobot; return { nama: a.nama, jabatan: a.jabatan, lama: a.lama_bulan, bobot };
             });
 
@@ -913,6 +974,29 @@
             fetchFromSpreadsheet();
         }
 
+        function applyAppSettings() {
+            // Update UI Dashboard
+            document.getElementById('dash-nama-sekolah').innerText = appSettings.namaSekolah;
+            document.getElementById('dash-alamat-sekolah').innerText = appSettings.alamatSekolah;
+            document.getElementById('dash-nama-pengembang').innerText = appSettings.namaPengembang;
+
+            // Update Form Inputs di Pengaturan Aplikasi
+            document.getElementById('app-nama-sekolah').value = appSettings.namaSekolah;
+            document.getElementById('app-alamat-sekolah').value = appSettings.alamatSekolah;
+            document.getElementById('app-nama-pengembang').value = appSettings.namaPengembang;
+        }
+
+        function saveAppSettings(e) {
+            e.preventDefault();
+            appSettings.namaSekolah = document.getElementById('app-nama-sekolah').value;
+            appSettings.alamatSekolah = document.getElementById('app-alamat-sekolah').value;
+            appSettings.namaPengembang = document.getElementById('app-nama-pengembang').value;
+
+            localStorage.setItem('kop_app_settings', JSON.stringify(appSettings));
+            applyAppSettings();
+            showAlertModal("Tersimpan", "Pengaturan Aplikasi berhasil disimpan dan Dashboard telah diperbarui.", "success");
+        }
+
         async function fetchFromSpreadsheet() {
             if (!scriptApiUrl) {
                 showAlertModal("Peringatan", "URL API belum diatur. Silakan atur di menu Pengaturan.", "warning");
@@ -965,6 +1049,8 @@
         window.onload = () => {
             document.getElementById('current-date').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             
+            applyAppSettings(); // Load dan aplikasikan pengaturan sekolah
+
             // Cek apakah url API sudah tersimpan di browser
             if (scriptApiUrl) {
                 document.getElementById('api-url').value = scriptApiUrl;
