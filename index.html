@@ -49,13 +49,19 @@
     <!-- Input File Hidden -->
     <input type="file" id="file-upload" class="hidden" accept=".xlsx, .xls, .csv" onchange="processImport(event)">
 
+    <!-- Sidebar Mobile Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 z-40 hidden md:hidden transition-opacity" onclick="toggleSidebar()"></div>
+
     <!-- Sidebar -->
-    <aside class="w-64 bg-kop-900 text-white flex flex-col transition-all duration-300 no-print" id="sidebar">
-        <div class="p-5 flex items-center gap-3 border-b border-kop-700">
-            <div class="bg-white text-kop-900 p-2 rounded-lg">
-                <i class="fa-solid fa-building-columns text-xl"></i>
+    <aside class="w-64 bg-kop-900 text-white flex flex-col transition-transform duration-300 fixed inset-y-0 left-0 z-50 transform -translate-x-full md:relative md:translate-x-0 md:flex no-print shadow-xl md:shadow-none" id="sidebar">
+        <div class="p-5 flex items-center justify-between border-b border-kop-700">
+            <div class="flex items-center gap-3">
+                <div class="bg-white text-kop-900 p-2 rounded-lg">
+                    <i class="fa-solid fa-building-columns text-xl"></i>
+                </div>
+                <h1 class="text-lg font-bold leading-tight">Koperasi<br><span class="text-kop-100 font-medium text-sm">Guru & Karyawan</span></h1>
             </div>
-            <h1 class="text-lg font-bold leading-tight">Koperasi<br><span class="text-kop-100 font-medium text-sm">Guru & Karyawan</span></h1>
+            <button onclick="toggleSidebar()" class="md:hidden text-slate-300 hover:text-white"><i class="fa-solid fa-xmark text-2xl"></i></button>
         </div>
         
         <nav class="flex-1 overflow-y-auto py-4 hide-scroll">
@@ -72,6 +78,7 @@
                 <li class="pt-2 pb-1 px-4 text-xs font-semibold text-kop-100 uppercase tracking-wider">Sistem</li>
                 <li><a href="#" onclick="switchView('pengaturan')" id="nav-pengaturan" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-kop-700 text-slate-300 hover:text-white transition-colors"><i class="fa-solid fa-gear w-5"></i> Pengaturan API</a></li>
                 <li><a href="#" onclick="switchView('pengaturan-app')" id="nav-pengaturan-app" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-kop-700 text-slate-300 hover:text-white transition-colors"><i class="fa-solid fa-sliders w-5"></i> Pengaturan Aplikasi</a></li>
+                <li class="mt-6 mb-2 px-3"><a href="#" onclick="openModal('modal-donasi')" class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-pink-600 to-rose-600 text-white hover:from-pink-500 hover:to-rose-500 transition-colors shadow-md font-medium text-sm"><i class="fa-solid fa-heart animate-pulse"></i> Donasi Developer</a></li>
             </ul>
         </nav>
         
@@ -85,12 +92,15 @@
     <!-- Area Konten Utama -->
     <main class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50 print-area">
         <!-- Header -->
-        <header class="bg-white shadow-sm h-16 flex items-center justify-between px-6 no-print">
-            <h2 id="page-title" class="text-xl font-semibold text-slate-800">Dashboard</h2>
-            <div class="flex items-center gap-4">
-                <button onclick="fetchFromSpreadsheet()" class="text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded-lg font-medium transition-colors hidden shadow-sm" id="btn-sync-header"><i class="fa-solid fa-rotate mr-1"></i> Sync Data</button>
-                <div class="text-sm text-slate-500 font-medium" id="current-date"></div>
-                <div class="w-8 h-8 rounded-full bg-kop-100 text-kop-600 flex items-center justify-center font-bold">A</div>
+        <header class="bg-white shadow-sm h-16 flex items-center justify-between px-4 md:px-6 no-print shrink-0">
+            <div class="flex items-center">
+                <button onclick="toggleSidebar()" class="md:hidden mr-4 text-slate-500 hover:text-slate-800 text-xl"><i class="fa-solid fa-bars"></i></button>
+                <h2 id="page-title" class="text-lg md:text-xl font-semibold text-slate-800">Dashboard</h2>
+            </div>
+            <div class="flex items-center gap-2 md:gap-4">
+                <button onclick="fetchFromSpreadsheet()" class="text-xs md:text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 px-2 md:px-3 py-1.5 rounded-lg font-medium transition-colors hidden shadow-sm whitespace-nowrap" id="btn-sync-header"><i class="fa-solid fa-rotate md:mr-1"></i><span class="hidden md:inline"> Sync Data</span></button>
+                <div class="hidden md:block text-sm text-slate-500 font-medium whitespace-nowrap" id="current-date"></div>
+                <div class="w-8 h-8 rounded-full bg-kop-100 text-kop-600 flex items-center justify-center font-bold text-sm shrink-0">A</div>
             </div>
         </header>
 
@@ -168,6 +178,7 @@
                             <i class="fa-solid fa-search absolute left-3 top-2.5 text-slate-400"></i>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
+                            <button id="btn-bulk-delete-anggota" onclick="confirmBulkDeleteAnggota()" class="hidden bg-red-50 hover:bg-red-100 text-red-600 px-3 py-2 rounded-lg text-sm font-medium transition-colors border border-red-200 shadow-sm"><i class="fa-solid fa-trash mr-1"></i> Hapus Terpilih</button>
                             <button onclick="downloadTemplate('anggota')" class="bg-white hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-200 shadow-sm"><i class="fa-solid fa-file-excel text-green-600 mr-1"></i> Template</button>
                             <button onclick="triggerImport('anggota')" class="bg-white hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-200 shadow-sm"><i class="fa-solid fa-file-import text-blue-500 mr-1"></i> Import</button>
                             <button onclick="exportData('anggota')" class="bg-white hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-200 shadow-sm"><i class="fa-solid fa-file-export text-emerald-500 mr-1"></i> Export</button>
@@ -178,6 +189,7 @@
                         <table class="w-full text-left text-sm text-slate-600">
                             <thead class="bg-slate-50 text-slate-500 uppercase font-semibold text-xs border-b border-slate-200">
                                 <tr>
+                                    <th class="px-6 py-4 w-12 text-center"><input type="checkbox" id="checkbox-all-anggota" onchange="toggleAllAnggota(this)" class="w-4 h-4 rounded border-slate-300 text-kop-600 cursor-pointer"></th>
                                     <th class="px-6 py-4">ID</th>
                                     <th class="px-6 py-4">Nama</th>
                                     <th class="px-6 py-4">Jabatan</th>
@@ -198,11 +210,14 @@
                     <div class="p-5 border-b border-slate-100 flex flex-wrap gap-4 justify-between items-center bg-slate-50/50">
                         <div class="flex-1">
                             <h3 class="font-bold text-slate-700 text-lg">Input Simpanan Massal</h3>
-                            <p class="text-xs text-slate-500 mt-1">Ubah data secara manual pada tabel dan klik <span class="font-bold text-emerald-600">Simpan</span> untuk memperbarui.</p>
+                            <p class="text-xs text-slate-500 mt-1">Ubah data secara manual pada tabel dan klik <span class="font-bold text-emerald-600">Simpan</span> atau <span class="font-bold text-blue-600">Simpan Semua</span> untuk memperbarui.</p>
                         </div>
-                        <div class="relative w-full md:w-64">
-                            <input type="text" id="search-simpanan" onkeyup="filterTable('search-simpanan', 'table-simpanan')" placeholder="Cari anggota..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
-                            <i class="fa-solid fa-search absolute left-3 top-2.5 text-slate-400"></i>
+                        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                            <div class="relative w-full md:w-64">
+                                <input type="text" id="search-simpanan" onkeyup="filterTable('search-simpanan', 'table-simpanan')" placeholder="Cari anggota..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                                <i class="fa-solid fa-search absolute left-3 top-2.5 text-slate-400"></i>
+                            </div>
+                            <button onclick="saveAllSimpanan()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm whitespace-nowrap"><i class="fa-solid fa-check-double mr-1"></i> Simpan Semua</button>
                         </div>
                     </div>
                     <div class="overflow-x-auto p-2">
@@ -241,6 +256,7 @@
                                     <th class="px-6 py-4">Nama Anggota</th>
                                     <th class="px-6 py-4 text-right">Total Pinjam</th>
                                     <th class="px-6 py-4 text-right">Sisa Pinjaman</th>
+                                    <th class="px-6 py-4">Keterangan</th>
                                     <th class="px-6 py-4 text-center">Status</th>
                                     <th class="px-6 py-4 text-center">Aksi</th>
                                 </tr>
@@ -268,6 +284,7 @@
                                     <th class="px-6 py-4">ID</th>
                                     <th class="px-6 py-4">Periode (Bulan/Tahun)</th>
                                     <th class="px-6 py-4 text-right">Jumlah Pendapatan (Rp)</th>
+                                    <th class="px-6 py-4">Keterangan</th>
                                     <th class="px-6 py-4 text-center">Aksi</th>
                                 </tr>
                             </thead>
@@ -348,7 +365,7 @@
                             <div class="pt-4 flex flex-wrap items-center gap-3">
                                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm"><i class="fa-solid fa-save mr-2"></i> Simpan URL</button>
                                 <button type="button" onclick="fetchFromSpreadsheet()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors border border-emerald-200"><i class="fa-solid fa-cloud-arrow-down mr-2"></i> Tarik Data Sekarang</button>
-                                <a href="https://drive.google.com/uc?export=download&id=11INUsmDcxNvLPevvGB7ajzV9hYSDwShB" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors border border-slate-300 flex items-center shadow-sm"><i class="fa-solid fa-download mr-2"></i> Unduh Kode App Script Spreadsheet</a>
+                                <a href="https://docs.google.com/document/d/1euO16ZLGJRzZYrtQMiQdjfoJFh1_A58ddvxGrZ4TjjI/edit?tab=t.0" target="_blank" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors border border-slate-300 flex items-center shadow-sm"><i class="fa-solid fa-download mr-2"></i> Unduh Kode App Script Spreadsheet</a>
                             </div>
                         </form>
                     </div>
@@ -397,7 +414,7 @@
     <div id="modal-backdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden z-40 transition-opacity"></div>
     
     <!-- Modal Form Anggota -->
-    <div id="modal-anggota" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-xl shadow-2xl z-50 hidden flex-col">
+    <div id="modal-anggota" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[95%] md:w-full max-w-md bg-white rounded-xl shadow-2xl z-50 hidden flex-col max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center p-5 border-b border-slate-100">
             <h3 id="modal-title-anggota" class="font-bold text-lg text-slate-800">Tambah Anggota</h3>
             <button onclick="closeModal('modal-anggota')" class="text-slate-400 hover:text-red-500 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -415,7 +432,7 @@
     </div>
 
     <!-- Modal Form Pinjaman -->
-    <div id="modal-pinjaman" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-xl shadow-2xl z-50 hidden flex-col">
+    <div id="modal-pinjaman" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[95%] md:w-full max-w-md bg-white rounded-xl shadow-2xl z-50 hidden flex-col max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center p-5 border-b border-slate-100">
             <h3 id="modal-title-pinjaman" class="font-bold text-lg text-slate-800">Ajukan Pinjaman</h3>
             <button onclick="closeModal('modal-pinjaman')" class="text-slate-400 hover:text-red-500 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -427,6 +444,7 @@
                 <p id="info-max-pinjam" class="text-xs text-orange-600 mt-1 font-medium bg-orange-50 px-2 py-1 rounded hidden"></p>
             </div>
             <div><label class="block text-sm font-medium text-slate-700 mb-1">Jumlah Pinjaman (Rp)</label><input type="number" id="pinjaman-jumlah" required min="1000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"></div>
+            <div><label class="block text-sm font-medium text-slate-700 mb-1">Keterangan / Keperluan</label><textarea id="pinjaman-keterangan" rows="2" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none" placeholder="Contoh: Renovasi rumah, biaya pendidikan, dll..."></textarea></div>
             <div class="grid grid-cols-2 gap-4">
                 <div><label class="block text-sm font-medium text-slate-700 mb-1">Tenor (Bulan)</label><input type="number" id="pinjaman-tenor" required min="1" max="60" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"></div>
                 <div><label class="block text-sm font-medium text-slate-700 mb-1">Status</label><select id="pinjaman-status" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"><option value="Belum Lunas">Belum Lunas</option><option value="Lunas">Lunas</option></select></div>
@@ -436,7 +454,7 @@
     </div>
 
     <!-- MODAL PEMBAYARAN PINJAMAN -->
-    <div id="modal-bayar" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-xl shadow-2xl z-50 hidden flex-col">
+    <div id="modal-bayar" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[95%] md:w-full max-w-md bg-white rounded-xl shadow-2xl z-50 hidden flex-col max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center p-5 border-b border-slate-100 bg-emerald-50 rounded-t-xl">
             <h3 class="font-bold text-lg text-emerald-800 flex items-center gap-2"><i class="fa-solid fa-wallet"></i> Proses Pembayaran</h3>
             <button onclick="closeModal('modal-bayar')" class="text-emerald-400 hover:text-emerald-700 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -459,21 +477,22 @@
     </div>
 
     <!-- Modal Form Pendapatan -->
-    <div id="modal-pendapatan" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-xl shadow-2xl z-50 hidden flex-col">
+    <div id="modal-pendapatan" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[95%] md:w-full max-w-md bg-white rounded-xl shadow-2xl z-50 hidden flex-col max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center p-5 border-b border-slate-100">
             <h3 id="modal-title-pendapatan" class="font-bold text-lg text-slate-800">Input Pendapatan</h3>
-            <button onclick="closeModal('modal-pendapatan')" class="text-slate-400 hover:text-red-500 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <button onclick="closeModal('pendapatan')" class="text-slate-400 hover:text-red-500 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
         </div>
         <form id="form-pendapatan" onsubmit="handleFormSubmit(event, 'pendapatan')" class="p-5 flex flex-col gap-4">
             <div><label class="block text-sm font-medium text-slate-700 mb-1">Periode (Bulan/Tahun)</label><input type="month" id="pendapatan-periode" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"></div>
             <div><label class="block text-sm font-medium text-slate-700 mb-1">Jumlah Pendapatan (Rp)</label><input type="number" id="pendapatan-jumlah" required min="1000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"></div>
+            <div><label class="block text-sm font-medium text-slate-700 mb-1">Keterangan / Sumber</label><textarea id="pendapatan-keterangan" rows="2" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none" placeholder="Contoh: Jasa layanan, penjualan ATK, dll..."></textarea></div>
             <div class="pt-4 border-t border-slate-100 flex justify-end gap-2"><button type="button" onclick="closeModal('modal-pendapatan')" class="px-4 py-2 text-sm bg-slate-100 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 text-sm text-white bg-purple-600 rounded-lg">Simpan</button></div>
         </form>
     </div>
 
     <!-- CUSTOM MODAL: KONFIRMASI HAPUS -->
-    <div id="modal-confirm" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-[60] flex items-center justify-center transition-opacity">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col">
+    <div id="modal-confirm" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-[60] flex items-center justify-center transition-opacity px-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col max-h-[90vh] overflow-y-auto">
             <div class="p-5 border-b border-slate-100 flex items-center gap-3 bg-red-50">
                 <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xl shrink-0">
                     <i class="fa-solid fa-triangle-exclamation"></i>
@@ -491,8 +510,8 @@
     </div>
 
     <!-- CUSTOM MODAL: PERINGATAN / ALERT -->
-    <div id="modal-alert" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-[60] flex items-center justify-center transition-opacity">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col">
+    <div id="modal-alert" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-[60] flex items-center justify-center transition-opacity px-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col max-h-[90vh] overflow-y-auto">
             <div class="p-5 border-b border-slate-100 flex items-center gap-3" id="alert-header">
                 <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xl shrink-0" id="alert-icon">
                     <i class="fa-solid fa-circle-info"></i>
@@ -508,6 +527,36 @@
         </div>
     </div>
 
+    <!-- MODAL DONASI -->
+    <div id="modal-donasi" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[95%] md:w-full max-w-md bg-white rounded-xl shadow-2xl z-50 hidden flex-col max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center p-5 border-b border-slate-100 bg-gradient-to-r from-pink-50 to-rose-50 rounded-t-xl">
+            <h3 class="font-bold text-lg text-rose-700 flex items-center gap-2"><i class="fa-solid fa-heart text-pink-500"></i> Dukung Pengembang</h3>
+            <button onclick="closeModal('modal-donasi')" class="text-rose-400 hover:text-rose-700 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+        <div class="p-6 flex flex-col items-center text-center gap-4">
+            <div class="w-16 h-16 bg-pink-100 text-pink-500 rounded-full flex items-center justify-center text-3xl mb-2 shadow-inner">
+                <i class="fa-solid fa-mug-hot"></i>
+            </div>
+            <h4 class="font-bold text-slate-800 text-lg">Bantu Kembangkan Aplikasi Ini!</h4>
+            <p class="text-sm text-slate-600">Aplikasi ini disediakan secara gratis. Jika Anda merasa terbantu dengan sistem ini, dukungan Anda sangat berarti untuk memotivasi pengembangan fitur selanjutnya.</p>
+            
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 w-full mt-2 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-20 h-20 bg-blue-100 rounded-bl-full -z-0 opacity-50"></div>
+                <div class="relative z-10 text-left">
+                    <p class="text-xs text-slate-500 font-bold mb-1 uppercase tracking-wider flex items-center gap-1"><i class="fa-solid fa-building-columns text-blue-600"></i> Bank BRI</p>
+                    <p class="text-2xl font-bold text-slate-800 font-mono tracking-wider" id="rekening-donasi">009801023322533</p>
+                    <p class="text-sm text-slate-600 mt-1">a.n <span class="font-bold text-slate-800">Supriyadi</span></p>
+                </div>
+                <button onclick="copyRekening()" class="absolute top-1/2 -translate-y-1/2 right-4 text-slate-600 hover:text-blue-600 transition-colors bg-white hover:bg-blue-50 px-3 py-2 rounded-md border border-slate-300 shadow-sm text-xs font-bold flex items-center gap-1 z-10">
+                    <i class="fa-regular fa-copy"></i> Salin
+                </button>
+            </div>
+        </div>
+        <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-center">
+            <button onclick="closeModal('modal-donasi')" class="px-8 py-2.5 text-sm text-slate-600 font-medium bg-white border border-slate-300 rounded-lg hover:bg-slate-100 transition-colors shadow-sm">Tutup</button>
+        </div>
+    </div>
+
     <script>
         let appData = { anggota: [], simpanan: [], pinjaman: [], pendapatan: [] };
         let activeImportType = null; 
@@ -519,8 +568,8 @@
 
         const excelHeaders = {
             anggota: ['ID', 'Nama', 'Jabatan', 'Lama_Bulan', 'Simpanan_Wajib', 'Simpanan_Sukarela'],
-            pinjaman: ['ID_Pinjaman', 'ID_Anggota', 'Jumlah', 'Sisa_Pinjaman', 'Tanggal', 'Tenor', 'Status'],
-            pendapatan: ['ID', 'Periode', 'Jumlah']
+            pinjaman: ['ID_Pinjaman', 'ID_Anggota', 'Jumlah', 'Sisa_Pinjaman', 'Tanggal', 'Tenor', 'Status', 'Keterangan'],
+            pendapatan: ['ID', 'Periode', 'Jumlah', 'Keterangan']
         };
 
         function formatRp(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka); }
@@ -536,11 +585,23 @@
                 let textValue = tr[i].textContent || tr[i].innerText;
                 if (textValue.toUpperCase().indexOf(filter) > -1) { tr[i].style.display = ""; } else { tr[i].style.display = "none"; }
             }
+            if (tableId === 'table-anggota') checkAnggotaSelection();
         }
 
         function updateSimpananPreview() {
             const val = parseInt(document.getElementById('anggota-lama-bulan').value) || 0;
             document.getElementById('preview-simpanan-wajib').innerText = `Simpanan Wajib: ${formatRp(val * 10000)}`;
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                overlay.classList.add('hidden');
+            } else {
+                overlay.classList.remove('hidden');
+            }
         }
 
         function switchView(viewId) {
@@ -551,6 +612,13 @@
             activeNav.classList.remove('text-slate-300'); activeNav.classList.add('bg-kop-700', 'text-white');
             const titles = { 'dashboard': 'Dashboard', 'anggota': 'Data Anggota', 'simpanan': 'Input Simpanan Anggota', 'pinjaman': 'Data Pinjaman', 'pendapatan': 'Pendapatan Usaha', 'shu': 'Perhitungan SHU', 'pengaturan': 'Pengaturan Sistem API', 'pengaturan-app': 'Pengaturan Aplikasi' };
             document.getElementById('page-title').innerText = titles[viewId];
+            
+            // Tutup otomatis sidebar pada versi mobile setelah menu diklik
+            if (window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.add('-translate-x-full');
+                const overlay = document.getElementById('sidebar-overlay');
+                if(overlay) overlay.classList.add('hidden');
+            }
         }
 
         function refreshUI() { renderDashboard(); renderAnggota(); renderSimpanan(); renderPinjaman(); renderPendapatan(); updateSelectAnggota(); }
@@ -580,6 +648,7 @@
         function renderAnggota() {
             document.getElementById('table-anggota').innerHTML = appData.anggota.map(a => `
                 <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-6 py-4 text-center"><input type="checkbox" class="cb-anggota w-4 h-4 rounded border-slate-300 text-kop-600 cursor-pointer" value="${a.id}" onchange="checkAnggotaSelection()"></td>
                     <td class="px-6 py-4 font-medium">${a.id}</td>
                     <td class="px-6 py-4">${a.nama}</td>
                     <td class="px-6 py-4"><span class="px-2 py-1 rounded text-xs font-medium ${a.jabatan !== 'Anggota' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'}">${a.jabatan}</span></td>
@@ -591,6 +660,7 @@
                     </td>
                 </tr>
             `).join('');
+            checkAnggotaSelection(); // Reset status checkbox all saat dirender ulang
         }
 
         function renderSimpanan() {
@@ -628,6 +698,45 @@
             }
         }
 
+        function saveAllSimpanan() {
+            let hasChanges = false;
+            let successCount = 0;
+
+            appData.anggota.forEach(a => {
+                const id = a.id;
+                const tglEl = document.getElementById(`simp-tgl-${id}`);
+                if (!tglEl) return; // Lewati jika elemen belum/tidak dirender di DOM
+
+                const tgl = tglEl.value;
+                const wajibInput = parseInt(document.getElementById(`simp-wajib-${id}`).value) || 0;
+                const lamaInput = parseInt(document.getElementById(`simp-lama-${id}`).value) || 0;
+                const jumlahBayarEl = document.getElementById(`simp-jumlah-${id}`);
+                const jumlahBayar = parseInt(jumlahBayarEl.value) || 0;
+
+                // Cek apakah ada perubahan (setoran baru, atau lama bulan / wajib diedit manual)
+                if (a.simpanan_wajib !== wajibInput || a.lama_bulan !== lamaInput || jumlahBayar > 0) {
+                    a.simpanan_wajib = wajibInput;
+                    a.lama_bulan = lamaInput;
+                    
+                    if (jumlahBayar > 0) {
+                        if (!tgl) { showAlertModal("Peringatan", `Tanggal untuk ${a.nama} tidak boleh kosong!`, "warning"); return; }
+                        a.simpanan_wajib += jumlahBayar; 
+                        appData.simpanan.push({ id: 'S-' + Math.floor(Math.random()*10000), id_anggota: id, jenis: 'Wajib', jumlah: jumlahBayar, tgl: tgl });
+                    }
+                    hasChanges = true;
+                    successCount++;
+                }
+            });
+
+            if (hasChanges) {
+                refreshUI(); 
+                syncToSpreadsheet();
+                showAlertModal("Sukses", `Berhasil menyimpan perubahan data simpanan untuk ${successCount} anggota!`, "success");
+            } else {
+                showAlertModal("Informasi", "Tidak ada perubahan data atau setoran baru yang perlu disimpan.", "info");
+            }
+        }
+
         function renderPinjaman() {
             document.getElementById('table-pinjaman').innerHTML = appData.pinjaman.map(p => {
                 const sisa = p.sisa_pinjaman !== undefined ? p.sisa_pinjaman : p.jumlah;
@@ -638,6 +747,7 @@
                     <td class="px-6 py-4 font-medium">${getAnggotaName(p.id_anggota)}</td>
                     <td class="px-6 py-4 text-right">${formatRp(p.jumlah)}</td>
                     <td class="px-6 py-4 text-right font-bold text-orange-600">${formatRp(sisa)}</td>
+                    <td class="px-6 py-4 text-xs text-slate-500 max-w-[150px] truncate" title="${p.keterangan || '-'}">${p.keterangan || '-'}</td>
                     <td class="px-6 py-4 text-center"><span class="px-2 py-1 rounded text-xs font-medium ${isLunas ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}">${isLunas ? 'Lunas' : 'Belum Lunas'}</span></td>
                     <td class="px-6 py-4 text-center flex justify-center gap-1">
                         <button onclick="openBayarModal('${p.id}')" class="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 px-2 py-1.5 rounded text-xs font-medium transition-colors border border-emerald-200" title="Bayar Pinjaman" ${isLunas ? 'disabled style="opacity: 0.5; cursor: not-allowed"' : ''}>
@@ -654,6 +764,7 @@
             document.getElementById('table-pendapatan').innerHTML = appData.pendapatan.map(p => `
                 <tr class="hover:bg-slate-50 transition-colors">
                     <td class="px-6 py-4">${p.id}</td><td class="px-6 py-4 font-medium">${p.periode}</td><td class="px-6 py-4 text-right font-medium text-purple-600">${formatRp(p.jumlah)}</td>
+                    <td class="px-6 py-4 text-xs text-slate-500 max-w-[150px] truncate" title="${p.keterangan || '-'}">${p.keterangan || '-'}</td>
                     <td class="px-6 py-4 text-center">
                         <button onclick="openEditModal('pendapatan', '${p.id}')" class="text-blue-500 hover:text-blue-700 mx-1 p-1" title="Edit"><i class="fa-solid fa-edit"></i></button>
                         <button onclick="confirmDeleteData('pendapatan', '${p.id}')" class="text-red-500 hover:text-red-700 mx-1 p-1" title="Hapus"><i class="fa-solid fa-trash"></i></button>
@@ -759,8 +870,8 @@
             if(appData[type].length === 0) { showAlertModal("Peringatan", "Tidak ada data untuk diekspor!", "warning"); return; }
             const exportArr = appData[type].map(item => {
                 if(type === 'anggota') return { "ID": item.id, "Nama": item.nama, "Jabatan": item.jabatan, "Lama_Bulan": item.lama_bulan, "Simpanan_Wajib": item.simpanan_wajib, "Simpanan_Sukarela": item.simpanan_sukarela };
-                if(type === 'pinjaman') return { "ID_Pinjaman": item.id, "ID_Anggota": item.id_anggota, "Jumlah": item.jumlah, "Sisa_Pinjaman": (item.sisa_pinjaman !== undefined ? item.sisa_pinjaman : item.jumlah), "Tanggal": item.tgl, "Tenor": item.tenor, "Status": item.status };
-                if(type === 'pendapatan') return { "ID": item.id, "Periode": item.periode, "Jumlah": item.jumlah };
+                if(type === 'pinjaman') return { "ID_Pinjaman": item.id, "ID_Anggota": item.id_anggota, "Jumlah": item.jumlah, "Sisa_Pinjaman": (item.sisa_pinjaman !== undefined ? item.sisa_pinjaman : item.jumlah), "Tanggal": item.tgl, "Tenor": item.tenor, "Status": item.status, "Keterangan": item.keterangan || '' };
+                if(type === 'pendapatan') return { "ID": item.id, "Periode": item.periode, "Jumlah": item.jumlah, "Keterangan": item.keterangan || '' };
             });
             const ws = XLSX.utils.json_to_sheet(exportArr); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Data"); XLSX.writeFile(wb, `Data_${type}.xlsx`);
         }
@@ -774,8 +885,8 @@
                 if(dataRaw.length === 0) { showAlertModal("Peringatan", "File Excel Anda kosong!", "warning"); return; }
                 const newItems = dataRaw.map(row => {
                     if(activeImportType === 'anggota') return { id: row.ID, nama: row.Nama, jabatan: row.Jabatan, lama_bulan: Number(row.Lama_Bulan||0), simpanan_wajib: Number(row.Lama_Bulan||0) * 10000, simpanan_sukarela: Number(row.Simpanan_Sukarela||0) };
-                    if(activeImportType === 'pinjaman') return { id: row.ID_Pinjaman, id_anggota: row.ID_Anggota, jumlah: Number(row.Jumlah||0), sisa_pinjaman: Number(row.Sisa_Pinjaman||row.Jumlah||0), tgl: row.Tanggal, tenor: row.Tenor, status: row.Status||'Belum Lunas' };
-                    if(activeImportType === 'pendapatan') return { id: row.ID, periode: row.Periode, jumlah: Number(row.Jumlah||0) };
+                    if(activeImportType === 'pinjaman') return { id: row.ID_Pinjaman, id_anggota: row.ID_Anggota, jumlah: Number(row.Jumlah||0), sisa_pinjaman: Number(row.Sisa_Pinjaman||row.Jumlah||0), tgl: row.Tanggal, tenor: row.Tenor, status: row.Status||'Belum Lunas', keterangan: row.Keterangan||'' };
+                    if(activeImportType === 'pendapatan') return { id: row.ID, periode: row.Periode, jumlah: Number(row.Jumlah||0), keterangan: row.Keterangan||'' };
                 });
                 appData[activeImportType] = [...appData[activeImportType], ...newItems];
                 refreshUI(); 
@@ -818,13 +929,78 @@
 
         function closeConfirmModal() { document.getElementById('modal-confirm').classList.add('hidden'); pendingDelete = null; }
 
+        // Fitur Salin Rekening Donasi
+        function copyRekening() {
+            const textArea = document.createElement("textarea");
+            textArea.value = "009801023322533";
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showAlertModal("Berhasil Disalin", "Nomor rekening BRI (009801023322533) berhasil disalin. Terima kasih atas dukungan Anda!", "success");
+            } catch (err) {
+                showAlertModal("Gagal", "Gagal menyalin nomor rekening. Silakan salin secara manual.", "warning");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Fitur Bulk Delete Anggota
+        function toggleAllAnggota(source) {
+            const checkboxes = document.querySelectorAll('.cb-anggota');
+            checkboxes.forEach(cb => {
+                if(cb.closest('tr').style.display !== 'none') { cb.checked = source.checked; }
+            });
+            checkAnggotaSelection();
+        }
+
+        function checkAnggotaSelection() {
+            const checkboxes = document.querySelectorAll('.cb-anggota');
+            const visibleCheckboxes = Array.from(checkboxes).filter(cb => cb.closest('tr').style.display !== 'none');
+            const checkedBoxes = visibleCheckboxes.filter(cb => cb.checked);
+            
+            const btnBulkDelete = document.getElementById('btn-bulk-delete-anggota');
+            if(btnBulkDelete) {
+                if(checkedBoxes.length > 0) btnBulkDelete.classList.remove('hidden');
+                else btnBulkDelete.classList.add('hidden');
+            }
+
+            const cbAll = document.getElementById('checkbox-all-anggota');
+            if(cbAll) {
+                if(visibleCheckboxes.length > 0 && checkedBoxes.length === visibleCheckboxes.length) {
+                    cbAll.checked = true; cbAll.indeterminate = false;
+                } else if (checkedBoxes.length > 0) {
+                    cbAll.checked = false; cbAll.indeterminate = true; // status strip (-) jika hanya sebagian
+                } else {
+                    cbAll.checked = false; cbAll.indeterminate = false;
+                }
+            }
+        }
+
+        function confirmBulkDeleteAnggota() {
+            const checkedBoxes = document.querySelectorAll('.cb-anggota:checked');
+            const ids = Array.from(checkedBoxes).map(cb => cb.value);
+            if(ids.length === 0) return;
+
+            document.getElementById('confirm-message').innerText = `Yakin ingin menghapus ${ids.length} data anggota yang dipilih beserta data simpanan dan pinjamannya? Tindakan ini tidak dapat dibatalkan.`;
+            pendingDelete = { type: 'bulk-anggota', ids: ids };
+            document.getElementById('confirm-action-btn').onclick = function() { executeDelete(); closeConfirmModal(); };
+            document.getElementById('modal-confirm').classList.remove('hidden');
+        }
+
         function executeDelete() {
             if(!pendingDelete) return;
-            const { type, id } = pendingDelete;
-            appData[type] = appData[type].filter(item => item.id !== id);
-            if(type === 'anggota') {
-                appData.simpanan = appData.simpanan.filter(s => s.id_anggota !== id);
-                appData.pinjaman = appData.pinjaman.filter(p => p.id_anggota !== id);
+            const { type, id, ids } = pendingDelete;
+            
+            if (type === 'bulk-anggota') {
+                appData.anggota = appData.anggota.filter(item => !ids.includes(item.id));
+                appData.simpanan = appData.simpanan.filter(s => !ids.includes(s.id_anggota));
+                appData.pinjaman = appData.pinjaman.filter(p => !ids.includes(p.id_anggota));
+            } else {
+                appData[type] = appData[type].filter(item => item.id !== id);
+                if(type === 'anggota') {
+                    appData.simpanan = appData.simpanan.filter(s => s.id_anggota !== id);
+                    appData.pinjaman = appData.pinjaman.filter(p => p.id_anggota !== id);
+                }
             }
             refreshUI();
             syncToSpreadsheet(); // Sync otomatis ke API
@@ -888,12 +1064,14 @@
             } else if (type === 'pinjaman') {
                 document.getElementById('pinjaman-anggota').value = item.id_anggota;
                 document.getElementById('pinjaman-jumlah').value = item.jumlah;
+                document.getElementById('pinjaman-keterangan').value = item.keterangan || '';
                 document.getElementById('pinjaman-tenor').value = item.tenor;
                 document.getElementById('pinjaman-status').value = item.status || 'Belum Lunas';
                 checkMaxPinjaman(); 
             } else if (type === 'pendapatan') {
                 document.getElementById('pendapatan-periode').value = item.periode;
                 document.getElementById('pendapatan-jumlah').value = item.jumlah;
+                document.getElementById('pendapatan-keterangan').value = item.keterangan || '';
             }
             openModal(`modal-${type}`);
         }
@@ -917,11 +1095,13 @@
                     item.jumlah = newJumlah;
                     // Reset sisa pinjaman apabila jumlah diedit secara manual
                     item.sisa_pinjaman = newJumlah; 
+                    item.keterangan = document.getElementById('pinjaman-keterangan').value;
                     item.tenor = document.getElementById('pinjaman-tenor').value;
                     item.status = document.getElementById('pinjaman-status').value;
                 } else if (type === 'pendapatan') {
                     item.periode = document.getElementById('pendapatan-periode').value;
                     item.jumlah = parseInt(document.getElementById('pendapatan-jumlah').value);
+                    item.keterangan = document.getElementById('pendapatan-keterangan').value;
                 }
                 showAlertModal("Sukses", `Data ${type} berhasil diperbarui!`, "success");
             } else {
@@ -935,12 +1115,13 @@
                         id_anggota: document.getElementById('pinjaman-anggota').value, 
                         jumlah: nominalPinjam, 
                         sisa_pinjaman: nominalPinjam, // Set sisa awal sama dengan jumlah
+                        keterangan: document.getElementById('pinjaman-keterangan').value,
                         tenor: document.getElementById('pinjaman-tenor').value, 
                         tgl: new Date().toISOString().split('T')[0], 
                         status: document.getElementById('pinjaman-status').value 
                     });
                 } else if (type === 'pendapatan') {
-                    appData.pendapatan.push({ id: 'INC-' + Math.floor(Math.random()*1000), periode: document.getElementById('pendapatan-periode').value, jumlah: parseInt(document.getElementById('pendapatan-jumlah').value) });
+                    appData.pendapatan.push({ id: 'INC-' + Math.floor(Math.random()*1000), periode: document.getElementById('pendapatan-periode').value, jumlah: parseInt(document.getElementById('pendapatan-jumlah').value), keterangan: document.getElementById('pendapatan-keterangan').value });
                 }
                 showAlertModal("Sukses", `Data ${type} baru berhasil ditambahkan!`, "success");
             }
